@@ -1,16 +1,13 @@
 package TermInvertedSenseBuilder;
 
 import io.github.repir.Repository.Repository;
-import io.github.repir.Retriever.Query;
+import io.github.repir.Repository.Term;
 import io.github.repir.tools.Lib.Log;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.TreeSet;
-import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.NullWritable;
+import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.InputFormat;
 import org.apache.hadoop.mapreduce.InputSplit;
 import org.apache.hadoop.mapreduce.Job;
@@ -30,7 +27,7 @@ import org.apache.hadoop.mapreduce.lib.output.NullOutputFormat;
  * <p/>
  * @author jeroen
  */
-public class SBInputFormat extends InputFormat<NullWritable, MapInputWritable> {
+public class SBInputFormat extends InputFormat<NullWritable, Text> {
 
    public static Log log = new Log(SBInputFormat.class);
    public static Repository repository;
@@ -39,18 +36,21 @@ public class SBInputFormat extends InputFormat<NullWritable, MapInputWritable> {
    public SBInputFormat() {
    }
 
-   public SBInputFormat(Job job, Collection<String> topics) {
+   public SBInputFormat(Job job, ArrayList<Term> topics) {
       job.setInputFormatClass(this.getClass());
       job.setOutputFormatClass(NullOutputFormat.class);
-      for (String t : topics) {
-         MapInputWritable m = new MapInputWritable();
-         m.stemmedterm = t;
-         add( repository, m );
+      for (int partition = 0; partition < repository.getPartitions(); partition++) {
+         SBInputSplit split = new SBInputSplit(repository, partition);
+         for (Term t : topics) {
+            Text rec = new Text( t.getProcessedTerm() );
+            split.add(rec);
+         }
+         list.add(split);
       }
    }
    
    @Override
-   public RecordReader<NullWritable, MapInputWritable> createRecordReader(InputSplit is, TaskAttemptContext tac) {
+   public RecordReader<NullWritable, Text> createRecordReader(InputSplit is, TaskAttemptContext tac) {
       return new KeyRecordReader();
    }
 
@@ -66,30 +66,15 @@ public class SBInputFormat extends InputFormat<NullWritable, MapInputWritable> {
       list = new ArrayList<SBInputSplit>();
    }
 
-   /**
-    * Add a Query request to the MapReduce job. Note that this is used as a
-    * static method (i.e. can only construct one job at the same startTime).
-    * <p/>
-    * @param repository Repository to retrieve the Query request from
-    * @param stemmedterm The Query request to retrieve
-    */
-   public static void add(Repository repository, MapInputWritable term) {
-      for (int partition = 0; partition < repository.getPartitions(); partition++) {
-         MapInputWritable rec = new MapInputWritable( partition, term.stemmedterm );
-         SBInputSplit split = new SBInputSplit(repository, partition, rec);
-         list.add(split);
-      }
-   }
-
    @Override
    public List<InputSplit> getSplits(JobContext context) throws IOException, InterruptedException {
       return new ArrayList<InputSplit>(list);
    }
 
-   public static class KeyRecordReader extends RecordReader<NullWritable, MapInputWritable> {
+   public static class KeyRecordReader extends RecordReader<NullWritable, Text> {
 
       private Repository repository;
-      private MapInputWritable current;
+      private Text current;
       private SBInputSplit is;
       private int pos = 0;
 
@@ -101,7 +86,8 @@ public class SBInputFormat extends InputFormat<NullWritable, MapInputWritable> {
 
       @Override
       public boolean nextKeyValue() throws IOException, InterruptedException {
-         if (pos == 0) {
+         if (pos < is.getLength()) {
+            current = is.inputvalue.get(pos);
             pos++;
             return true;
          }
@@ -114,13 +100,13 @@ public class SBInputFormat extends InputFormat<NullWritable, MapInputWritable> {
       }
 
       @Override
-      public MapInputWritable getCurrentValue() throws IOException, InterruptedException {
-         return is.inputvalue;
+      public Text getCurrentValue() throws IOException, InterruptedException {
+         return current;
       }
 
       @Override
       public float getProgress() throws IOException, InterruptedException {
-         return (pos) / (float) (1);
+         return (pos) / (float) (is.getLength());
       }
 
       @Override

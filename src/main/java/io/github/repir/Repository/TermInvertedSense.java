@@ -4,7 +4,7 @@ import io.github.repir.Repository.DocLiteral;
 import io.github.repir.Repository.Repository;
 import io.github.repir.Repository.TermDocumentFeature;
 import io.github.repir.tools.Content.Datafile;
-import io.github.repir.tools.Content.RecordSequentialArray;
+import io.github.repir.tools.Content.StructuredFileSequential;
 import io.github.repir.Repository.TermInvertedSense.File;
 import io.github.repir.Retriever.Document;
 import io.github.repir.tools.Lib.Log;
@@ -17,6 +17,7 @@ public class TermInvertedSense extends TermDocumentFeature<File, SensePos> {
    static final SensePos ZEROPOS = new SensePos();
    DocLiteral collectionid;
    long offsetstart = 0;
+   int reducetermid;
 
    protected TermInvertedSense(Repository repository, String field) {
       super(repository, field);
@@ -31,9 +32,9 @@ public class TermInvertedSense extends TermDocumentFeature<File, SensePos> {
    }
 
    private void setTerm(int termid) {
-      for (; this.termid < termid; this.termid++) {
-         if (this.termid >= 0) {
-            log.info("term %d start %d end %d", this.termid, offsetstart, file.getOffset());
+      for (; reducetermid < termid; reducetermid++) {
+         if (this.reducetermid >= 0) {
+            log.info("term %d start %d end %d", reducetermid, offsetstart, file.getOffset());
            file.setOffsetTupleStart(offsetstart);
            file.recordEnd();
          }
@@ -42,13 +43,13 @@ public class TermInvertedSense extends TermDocumentFeature<File, SensePos> {
    }
    
    public void startWrite( int partition ) {
-      termid = -1;
+      reducetermid = -1;
       setPartition(partition);
       getFile().openWrite();
    }
    
    public void finishWrite() {
-      for (int term = termid; term < repository.getVocabularySize(); term++) {
+      for (int term = reducetermid; term < repository.getVocabularySize(); term++) {
          setTerm( term );
       }
       file.closeWrite();
@@ -81,7 +82,27 @@ public class TermInvertedSense extends TermDocumentFeature<File, SensePos> {
       return new File(datafile);
    }
 
-   public static class File extends RecordSequentialArray {
+   @Override
+   public void decode(Document d, int reportid) {
+      throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+   }
+
+   @Override
+   public void encode(Document d, int reportid) {
+      throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+   }
+
+   @Override
+   public void report(Document doc, int reportid) {
+      throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+   }
+
+   @Override
+   public SensePos valueReported(Document doc, int reportid) {
+      throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+   }
+
+   public static class File extends StructuredFileSequential {
 
       public IntField docid = this.addInt("docid");
       protected CIntIncrField pos = this.addCIntIncr("pos");

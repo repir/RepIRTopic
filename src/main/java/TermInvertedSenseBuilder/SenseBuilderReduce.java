@@ -1,17 +1,16 @@
 package TermInvertedSenseBuilder;
 
+import io.github.repir.Repository.AutoTermDocumentFeature;
 import io.github.repir.Repository.EntityStoredFeature;
 import io.github.repir.Repository.Repository;
-import io.github.repir.tools.Lib.HDTools;
+import io.github.repir.Repository.TermInvertedSense;
 import io.github.repir.tools.Lib.Log;
+import io.github.repir.tools.MapReduce.Job;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.mapreduce.Reducer;
-import io.github.repir.Repository.AutoTermDocumentFeature;
-import io.github.repir.Repository.TermInvertedSense;
-import io.github.repir.tools.Lib.ArrayTools;
 
 public class SenseBuilderReduce extends Reducer<SenseKey, SenseValue, NullWritable, NullWritable> {
 
@@ -26,15 +25,15 @@ public class SenseBuilderReduce extends Reducer<SenseKey, SenseValue, NullWritab
    @Override
    protected void setup(Context context) throws IOException, InterruptedException {
       repository = new Repository(context.getConfiguration());
-      partition = HDTools.getReducerId(context);
-      feature = (TermInvertedSense)repository.getFeature("TermInvertedSense:all");
+      partition = Job.getReducerId(context);
+      feature = (TermInvertedSense)repository.getFeature(TermInvertedSense.class, "all");
       feature.startWrite(partition);
    }
 
    @Override
    public void reduce(SenseKey key, Iterable<SenseValue> values, Context context)
            throws IOException, InterruptedException {
-      HDTools.reduceReport(context);
+      Job.reduceReport(context);
       for (SenseValue value : values) {
          //log.info("%d %d %s %s", key.termid, key.docid, ArrayTools.toString(value.pos),
          //        ArrayTools.toString(value.sense));

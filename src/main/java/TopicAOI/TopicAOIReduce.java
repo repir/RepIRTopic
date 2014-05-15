@@ -1,14 +1,14 @@
 package TopicAOI;
 
+import io.github.repir.Repository.Repository;
 import io.github.repir.Repository.TopicAOI;
 import io.github.repir.Repository.TopicAOI.Record;
-import io.github.repir.Repository.Repository;
-import io.github.repir.tools.Lib.HDTools;
+import io.github.repir.tools.Lib.ArrayTools;
 import io.github.repir.tools.Lib.Log;
+import io.github.repir.tools.MapReduce.Job;
 import java.io.IOException;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.mapreduce.Reducer;
-import io.github.repir.tools.Lib.ArrayTools;
 
 public class TopicAOIReduce extends Reducer<TopicTermSense, TopicTermSense, NullWritable, NullWritable> {
 
@@ -19,14 +19,14 @@ public class TopicAOIReduce extends Reducer<TopicTermSense, TopicTermSense, Null
    @Override
    protected void setup(Context context) throws IOException, InterruptedException {
       repository = new Repository(context.getConfiguration());
-      topicaoi = (TopicAOI)repository.getFeature("TopicAOI");
+      topicaoi = (TopicAOI)repository.getFeature(TopicAOI.class);
       topicaoi.openWrite();
    }
 
    @Override
    public void reduce(TopicTermSense key, Iterable<TopicTermSense> values, Context context)
            throws IOException, InterruptedException {
-      HDTools.reduceReport(context);
+      Job.reduceReport(context);
       Record record = (Record)topicaoi.newRecord();
       record.topic = key.getTopic();
       record.term = key.getTermID();
@@ -49,8 +49,8 @@ public class TopicAOIReduce extends Reducer<TopicTermSense, TopicTermSense, Null
          record.df += value.getContextDf();
       }
       log.info("%d %d %d\n%s\n%s", record.topic, record.term, record.df, 
-              ArrayTools.toString(record.senseoccurrence),
-              ArrayTools.toString(record.sensedoccurrence)
+              ArrayTools.concat(record.senseoccurrence),
+              ArrayTools.concat(record.sensedoccurrence)
               );
       topicaoi.write(record);
       context.progress();

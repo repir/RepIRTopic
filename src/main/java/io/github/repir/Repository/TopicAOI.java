@@ -5,8 +5,8 @@ import io.github.repir.Repository.Repository;
 import io.github.repir.Repository.TopicAOI.File;
 import io.github.repir.Repository.TopicAOI.Record;
 import io.github.repir.tools.Content.Datafile;
-import io.github.repir.tools.Content.RecordHeaderData;
-import io.github.repir.tools.Content.RecordHeaderDataRecord;
+import io.github.repir.tools.Content.StructuredFileKeyValue;
+import io.github.repir.tools.Content.StructuredFileKeyValueRecord;
 import io.github.repir.tools.Lib.Log;
 import io.github.repir.tools.Lib.MathTools;
 
@@ -27,7 +27,7 @@ public class TopicAOI extends StoredDynamicFeature<File, Record> {
       return new File(df);
    }
 
-   public class File extends RecordHeaderData<Record> {
+   public class File extends StructuredFileKeyValue<Record> {
 
       public CIntField topic = this.addCInt("topic");
       public CIntField term = this.addCInt("term");
@@ -45,9 +45,17 @@ public class TopicAOI extends StoredDynamicFeature<File, Record> {
       public Record newRecord() {
          return new Record();
       }
+
+      @Override
+      public Record closingRecord() {
+         Record r = newRecord();
+         r.topic = -1;
+         r.term = -1;
+         return r;
+      }
    }
 
-   public class Record implements RecordHeaderDataRecord<File> {
+   public class Record implements StructuredFileKeyValueRecord<File> {
       public int topic;
       public int term;
       public int cf;
@@ -92,7 +100,7 @@ public class TopicAOI extends StoredDynamicFeature<File, Record> {
          sensedf = file.sensedf.value;
       }
 
-      public void convert(RecordHeaderDataRecord record) {
+      public void convert(StructuredFileKeyValueRecord record) {
          Record r = (Record)record;
          r.cf = cf;
          r.df = df;

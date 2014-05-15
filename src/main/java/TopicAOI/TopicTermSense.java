@@ -2,12 +2,12 @@ package TopicAOI;
 
 import java.io.DataInput;
 import java.io.DataOutput;
-import java.io.EOFException;
 import java.io.IOException;
 import org.apache.hadoop.io.WritableComparable;
 import org.apache.hadoop.io.WritableComparator;
 import io.github.repir.tools.Content.BufferDelayedWriter;
 import io.github.repir.tools.Content.BufferReaderWriter;
+import io.github.repir.tools.Content.EOCException;
 
 /**
  *
@@ -140,7 +140,7 @@ public class TopicTermSense implements WritableComparable<TopicTermSense> {
          aoicf = reader.readCIntArray();
          aoidf = reader.readCIntArray();
          df = reader.readCIntArray();
-      } catch (EOFException ex) {
+      } catch (EOCException ex) {
          throw new IOException(ex);
       }
    }

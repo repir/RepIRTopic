@@ -20,17 +20,13 @@ public class listTermContext {
       ArgsParser parsedargs = new ArgsParser(args, "configfile term");
       Repository repository = new Repository(parsedargs.get("configfile"));
       Retriever retriever = new Retriever(repository);
-      TermContext termcontext = (TermContext) repository.getFeature("TermContext");
       englishStemmer stemmer = englishStemmer.get();
-      int termid = repository.termToID( stemmer.stem(parsedargs.get("term")) );
-
-      HashMap<Doc, ArrayList<Sample>> samples = termcontext.read(termid);
+      TermContext termcontext = (TermContext) repository.getFeature(TermContext.class, stemmer.stem(parsedargs.get("term")));
+      HashMap<Doc, ArrayList<Sample>> samples = termcontext.readSamples();
       for ( ArrayList<Sample> doc : samples.values() ) {
          for (Sample sample : doc ) {
-            log.printf("%s %s\n", ArrayTools.toString(sample.leftcontext), ArrayTools.toString(sample.rightcontext));
+            log.printf("%s %s", ArrayTools.concat(sample.leftcontext), ArrayTools.concat(sample.rightcontext));
          }
       }
    }
-
-
 }

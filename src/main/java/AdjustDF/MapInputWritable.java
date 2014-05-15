@@ -3,12 +3,12 @@ package AdjustDF;
 import TermInvertedSenseBuilder.*;
 import io.github.repir.tools.Content.BufferDelayedWriter;
 import io.github.repir.tools.Content.BufferReaderWriter;
+import io.github.repir.tools.Content.EOCException;
 import io.github.repir.tools.Content.StructureReader;
 import io.github.repir.tools.Content.StructureWriter;
 import io.github.repir.tools.Lib.Log;
 import java.io.DataInput;
 import java.io.DataOutput;
-import java.io.EOFException;
 import java.io.IOException;
 import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.io.WritableComparator;
@@ -25,14 +25,21 @@ public class MapInputWritable implements Writable {
 
    public static Log log = new Log(MapInputWritable.class);
    public int partition;
-   public String stemmedterm;
+   public String term;
 
    public MapInputWritable() {
    }
 
    public MapInputWritable(int partition, String term) {
       this.partition = partition;
-      this.stemmedterm = term;
+      this.term = term;
+   }
+
+   public MapInputWritable clone(int partition) {
+      MapInputWritable m = new MapInputWritable();
+      m.partition = partition;
+      m.term = term;
+      return m;
    }
 
    @Override
@@ -44,7 +51,7 @@ public class MapInputWritable implements Writable {
 
    public void write(StructureWriter writer) {
       writer.write(partition);
-      writer.write(stemmedterm);
+      writer.write(term);
    }
 
    @Override
@@ -54,8 +61,8 @@ public class MapInputWritable implements Writable {
       readFields(rw);
    }
 
-   public void readFields(StructureReader reader) throws EOFException {
+   public void readFields(StructureReader reader) throws EOCException {
       partition = reader.readInt();
-      stemmedterm = reader.readString();
+      term = reader.readString();
    }
 }

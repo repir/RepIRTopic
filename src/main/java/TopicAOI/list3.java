@@ -1,19 +1,20 @@
 package TopicAOI;
 
-import util.*;
-import java.util.ArrayList;
-import io.github.repir.Repository.Repository;
-import io.github.repir.Retriever.Retriever;
 import io.github.repir.Repository.AOI;
 import io.github.repir.Repository.AOI.Rule;
+import io.github.repir.Repository.Repository;
+import io.github.repir.Repository.Term;
+import io.github.repir.Repository.TermCF;
 import io.github.repir.Repository.TermDF;
-import io.github.repir.Repository.TermTF;
 import io.github.repir.Repository.TopicAOI;
 import io.github.repir.Repository.TopicAOI.Record;
+import io.github.repir.Retriever.Retriever;
 import io.github.repir.tools.Lib.ArgsParser;
 import io.github.repir.tools.Lib.Log;
 import io.github.repir.tools.Lib.PrintTools;
 import io.github.repir.tools.Stemmer.englishStemmer;
+import java.util.ArrayList;
+import util.*;
 
 public class list3 {
 
@@ -23,30 +24,29 @@ public class list3 {
    public static void main(String[] args) {
       ArgsParser parsedargs = new ArgsParser(args, "configfile [topic] [term]");
       repository = new Repository(parsedargs.get("configfile"));
-      String term = parsedargs.get("term");
+      Term term = repository.getTerm(parsedargs.get("term"));
       int topic = parsedargs.getInt("topic");
       Retriever retriever = new Retriever(repository);
-      TopicAOI termsense = (TopicAOI) repository.getFeature("TopicAOI");
+      TopicAOI termsense = (TopicAOI) repository.getFeature(TopicAOI.class);
       if (term == null) {
          termsense.openRead();
          for (Record record : termsense.getKeys()) {
-            term( record);
+            term( record, repository.getTerm(record.term));
          }
       } else {
-         int termid = repository.termToID(englishStemmer.get().stem(term));
-         Record sense = termsense.read(topic, termid);
-         term(sense);
+         Record sense = termsense.read(topic, term.getID());
+         term(sense, term);
       }
    }
    
-   public static void term( Record sense ) {
-      AOI aoi = (AOI)repository.getFeature("AOI");
+   public static void term( Record sense, Term term ) {
+      AOI aoi = (AOI)repository.getFeature(AOI.class, term.getProcessedTerm());
       aoi.openRead();
-      ArrayList<Rule> rules = aoi.read( sense.term );
-      TermTF termtf = (TermTF)repository.getFeature("TermTF");
+      ArrayList<Rule> rules = aoi.readRules( );
+      TermCF termtf = (TermCF)repository.getFeature(TermCF.class);
       termtf.openRead();
       long cf = termtf.readValue( sense.term );
-      TermDF termdf = (TermDF)repository.getFeature("TermDF");
+      TermDF termdf = (TermDF)repository.getFeature(TermDF.class);
       termdf.openRead();
       long df = termdf.readValue( sense.term );
       StringBuilder sb = new StringBuilder();

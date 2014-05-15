@@ -1,27 +1,27 @@
 package AdjustDF;
 
+import io.github.repir.Repository.AOI;
+import io.github.repir.Repository.AOI.Record;
+import io.github.repir.Repository.AOI.Rule;
+import io.github.repir.Repository.AutoTermDocumentFeature;
 import io.github.repir.Repository.EntityStoredFeature;
 import io.github.repir.Repository.Repository;
-import io.github.repir.tools.Lib.HDTools;
+import io.github.repir.Repository.Term;
 import io.github.repir.tools.Lib.Log;
+import io.github.repir.tools.MapReduce.Job;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.mapreduce.Reducer;
-import io.github.repir.Strategy.Collector.AOICollector;
-import io.github.repir.Repository.AOI;
-import io.github.repir.Repository.AOI.Record;
-import io.github.repir.Repository.AOI.Rule;
-import io.github.repir.Repository.AutoTermDocumentFeature;
 
 public class AdjustDFReduce extends Reducer<SenseKey, SenseValue, NullWritable, NullWritable> {
 
    public static Log log = new Log(AdjustDFReduce.class);
    Repository repository;
    int partition;
-   AOI feature;
+   AOI aoi;
    HashMap<String, Integer> doclist = new HashMap<String, Integer>();
    ArrayList<EntityStoredFeature> documentfeatures = new ArrayList<EntityStoredFeature>();
    ArrayList<AutoTermDocumentFeature> termdocfeatures = new ArrayList<AutoTermDocumentFeature>();
@@ -30,24 +30,17 @@ public class AdjustDFReduce extends Reducer<SenseKey, SenseValue, NullWritable, 
    @Override
    protected void setup(Context context) throws IOException, InterruptedException {
       repository = new Repository(context.getConfiguration());
-      partition = HDTools.getReducerId(context);
-      feature = (AOI)repository.getFeature("AOI");
-      feature.openRead();
-      keys = feature.getKeys();
+      partition = Job.getReducerId(context);
    }
 
    @Override
    public void reduce(SenseKey key, Iterable<SenseValue> values, Context context)
            throws IOException, InterruptedException {
-      HDTools.reduceReport(context);
-      Record record = null;
-      for (Record r : keys) {
-         if (r.term == key.termid) {
-            record = r;
-            break;
-         }
-      }
-      ArrayList<Rule> rules = feature.read(key.termid);
+      Job.reduceReport(context);
+      Term term = repository.getTerm(key.termid);
+      AOI aoi = (AOI)repository.getFeature(AOI.class, term.getProcessedTerm());
+      keys = aoi.getKeys();
+      ArrayList<Rule> rules = aoi.readRules();
       for (Rule r : rules)
          r.df = 0;
       for (SenseValue value : values) {
@@ -57,16 +50,19 @@ public class AdjustDFReduce extends Reducer<SenseKey, SenseValue, NullWritable, 
             }
          }
       }
-      record.rules = AOICollector.getRules(rules);
+      aoi.openWrite();
+      for (Rule r : rules)
+         aoi.write(aoi.ceateRecord(r));
+      aoi.closeWrite();
       context.progress();
    }
 
    @Override
    protected void cleanup(Context context) throws IOException, InterruptedException {
-      feature.openWrite();
+      aoi.openAppend();
       for (Record r :keys) {
-         feature.write(r);
+         aoi.write(r);
       }
-      feature.closeWrite();
+      aoi.closeWrite();
    }
 }

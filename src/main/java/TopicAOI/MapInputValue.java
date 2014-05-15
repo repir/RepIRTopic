@@ -1,20 +1,19 @@
 package TopicAOI;
 
-import TopicAOI.MapInputValue.TopicKey;
 import io.github.repir.tools.Content.BufferDelayedWriter;
 import io.github.repir.tools.Content.BufferReaderWriter;
+import io.github.repir.tools.Content.EOCException;
 import io.github.repir.tools.Content.StructureReader;
 import io.github.repir.tools.Content.StructureWriter;
+import io.github.repir.tools.DataTypes.Tuple2;
 import io.github.repir.tools.Lib.Log;
 import java.io.DataInput;
 import java.io.DataOutput;
-import java.io.EOFException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.Map;
 import org.apache.hadoop.io.Writable;
-import io.github.repir.tools.DataTypes.HashMap;
 
 /**
  * @author jeroen
@@ -23,10 +22,7 @@ public class MapInputValue implements Writable {
 
    public static Log log = new Log(MapInputValue.class);
    public int partition;
-   public int topic;
-   public int termid;
-   public String stemmedterm;
-   public HashSet<String> documents;
+   public HashMap<Tuple2<Integer, String>, ArrayList<String>> map_topicterm_documents;
 
    public MapInputValue() {
    }
@@ -34,10 +30,7 @@ public class MapInputValue implements Writable {
    public MapInputValue clone( int partition ) {
       MapInputValue m = new MapInputValue();
       m.partition = partition;
-      m.topic = topic;
-      m.termid = termid;
-      m.stemmedterm = stemmedterm;
-      m.documents = (HashSet<String>)documents.clone();
+      m.map_topicterm_documents = map_topicterm_documents;
       return m;
    }
 
@@ -50,10 +43,12 @@ public class MapInputValue implements Writable {
 
    public void write(StructureWriter writer) {
       writer.write(partition);
-      writer.write(topic);
-      writer.write(termid);
-      writer.write(stemmedterm);
-      writer.writeStr(documents);
+      writer.write(map_topicterm_documents.size());
+      for (Map.Entry<Tuple2<Integer, String>, ArrayList<String>> entry : map_topicterm_documents.entrySet()) {
+         writer.write(entry.getKey().value1);
+         writer.write(entry.getKey().value2);
+         writer.writeStr(entry.getValue());
+      }
    }
 
    @Override
@@ -63,34 +58,14 @@ public class MapInputValue implements Writable {
       readFields(rw);
    }
 
-   public void readFields(StructureReader reader) throws EOFException {
+   public void readFields(StructureReader reader) throws EOCException {
       partition = reader.readInt();
-      topic = reader.readInt();
-      termid = reader.readInt();
-      stemmedterm = reader.readString();
-      documents = new HashSet<String>(reader.readStrArrayList());
-   }
-
-   public static class TopicKey {
-
-      int termid;
-      int topic;
-
-      protected TopicKey() {}
-      
-      public TopicKey(int topic, int termid) {
-         this.topic = topic;
-         this.termid = termid;
-      }
-
-      public void readFields(StructureReader reader) throws EOFException {
-         topic = reader.readInt();
-         termid = reader.readInt();
-      }
-
-      public void write(StructureWriter writer) {
-         writer.write(topic);
-         writer.write(termid);
+      map_topicterm_documents = new HashMap<Tuple2<Integer, String>, ArrayList<String>>();
+      int size = reader.readInt();
+      for (int i = 0 ; i < size; i++) {
+         map_topicterm_documents.put(
+                 new Tuple2<Integer, String>(reader.readInt(), reader.readString()),
+                 reader.readStrArrayList());
       }
    }
 }

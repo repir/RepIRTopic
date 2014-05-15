@@ -3,10 +3,10 @@ package AdjustDF;
 import TermInvertedSenseBuilder.*;
 import io.github.repir.tools.Content.BufferDelayedWriter;
 import io.github.repir.tools.Content.BufferReaderWriter;
+import io.github.repir.tools.Content.EOCException;
 import io.github.repir.tools.Lib.Log;
 import java.io.DataInput;
 import java.io.DataOutput;
-import java.io.EOFException;
 import java.io.IOException;
 import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.io.WritableComparable;
@@ -59,7 +59,7 @@ public class SenseKey implements WritableComparable<SenseKey> {
          BufferReaderWriter reader = new BufferReaderWriter(b);
          partition = reader.readShort();
          termid = reader.readInt();
-      } catch (EOFException ex) {
+      } catch (EOCException ex) {
          throw new IOException(ex);
       }
    }

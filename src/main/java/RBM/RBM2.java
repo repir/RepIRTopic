@@ -303,8 +303,8 @@ public class RBM2 {
       for (Sample sample : set) {
          estimate_hidden(sample.visible, params, p_h1, state_h1);
          estimate_visible_likelihood(sample.visible, params, p_v2);
-         log.info("values %s", ArrayTools.toString(sample.visible.getRow(0)));
-         log.info("approx %s", ArrayTools.toString(p_v2.getRow(0)));
+         log.info("values %s", ArrayTools.concat(sample.visible.getRow(0)));
+         log.info("approx %s", ArrayTools.concat(p_v2.getRow(0)));
       }
    }
 }

@@ -36,10 +36,8 @@ public class TopicContextInputFormat extends InputFormat<NullWritable, MapInputV
     * @param inputvalue The Query request to retrieve
     */
    public static void add(Repository repository, MapInputValue inputvalue) {
-      for (int partition = 0; partition < repository.getPartitions(); partition++) {
-         TopicAOIInputSplit split = new TopicAOIInputSplit(repository, partition, inputvalue);
+         TopicAOIInputSplit split = new TopicAOIInputSplit(repository, inputvalue.partition, inputvalue);
          list.add(split);
-      }
    }
 
    @Override

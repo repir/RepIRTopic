@@ -1,26 +1,28 @@
-package io.github.repir.Strategy;
+package io.github.repir.Strategy.Operator;
 
-import io.github.repir.Strategy.Term;
-import io.github.repir.Strategy.GraphRoot;
-import io.github.repir.Strategy.GraphNode;
-import java.util.ArrayList;
 import io.github.repir.Repository.AOI;
 import io.github.repir.Repository.AOI.Rule;
-import io.github.repir.Retriever.Document;
-import io.github.repir.tools.Lib.Log;
+import io.github.repir.Repository.Term;
 import io.github.repir.Repository.TermInvertedSense;
 import io.github.repir.Repository.TermInvertedSense.SensePos;
 import io.github.repir.Repository.TopicAOI;
 import io.github.repir.Repository.TopicAOI.Record;
+import io.github.repir.Retriever.Document;
+import io.github.repir.Strategy.GraphRoot;
+import io.github.repir.Strategy.GraphRoot;
+import io.github.repir.Strategy.Operator.Operator;
+import io.github.repir.Strategy.Operator.QTerm;
 import io.github.repir.tools.Lib.ArrayTools;
+import io.github.repir.tools.Lib.Log;
 import io.github.repir.tools.Lib.MathTools;
+import java.util.ArrayList;
 
 /**
  * A Term scores the occurrences of a single term in a document.
  * <p/>
  * @author jeroen
  */
-public class TermAOI extends Term {
+public class TermAOI extends QTerm {
 
    public static Log log = new Log(TermAOI.class);
    public TermInvertedSense storefeature;
@@ -30,39 +32,41 @@ public class TermAOI extends Term {
    boolean contextfound;
    double maxrel = 0;
 
-   public TermAOI(GraphRoot root, String originalterm, String stemmedterm) {
-      super(root, originalterm, stemmedterm);
-      alpha = repository.getConfigurationDouble("aoi.alpha", 0.8);
+   public TermAOI(GraphRoot root, Term term) {
+      super(root, term);
+      alpha = repository.configuredDouble("aoi.alpha", 0.8);
    }
 
-   public TermAOI(GraphRoot im, ArrayList<Term> list) {
-      this(im, list.get(0).originalterm, list.get(0).stemmedterm);
+   public TermAOI(GraphRoot im, ArrayList<QTerm> list) {
+      this(im, list.get(0).term);
    }
 
    @Override
    public void prepareRetrieval() {
-      storefeature = (TermInvertedSense) root.retrievalmodel.requestFeature("TermInvertedSense:" + channel + ":" + stemmedterm);
-      storefeature.setTerm(stemmedterm);
+      storefeature = (TermInvertedSense) root.retrievalmodel.requestFeature(
+              TermInvertedSense.class, channel, term.getProcessedTerm());
+      storefeature.setTerm(term);
    }
 
    @Override
    public void readStatistics() {
-      TopicAOI termsense = (TopicAOI) repository.getFeature("TopicAOI");
-      Record sense = termsense.read(retrievalmodel.query.id, termid);
+      super.readStatistics();
+      TopicAOI termsense = (TopicAOI) repository.getFeature(TopicAOI.class);
+      Record sense = termsense.read(retrievalmodel.query.id, term.getID());
       prel = new double[65];
       pc = new double[65];
       ArrayTools.fill(prel, 0);
-      AOI aoi = (AOI) repository.getFeature("AOI");
+      AOI aoi = (AOI) repository.getFeature(AOI.class, term.getProcessedTerm());
       aoi.openRead();
       contextfound = false;
-      log.info("termid %d", termid);
-      ArrayList<Rule> rules = aoi.read(termid);
+      log.info("termid %d", term.getID());
+      ArrayList<Rule> rules = aoi.readRules();
 
       double notp = 1;
       int count = 0;
       for (Rule r : rules) {
          double p_aoi_r = sense.senseoccurrence[r.sense] / (double) sense.cf;
-         double p_context = sense.cf / (double) featurevalues.corpusfrequency;
+         double p_context = sense.cf / (double) getCF();
          double p_aoi_context = sense.senseoccurrence[r.sense] / (double) r.cf;
          if (p_aoi_context - p_context > 0) {
             prel[r.sense] = sense.senseoccurrence[r.sense] / (double) sense.cf;
@@ -75,14 +79,14 @@ public class TermAOI extends Term {
 
    @Override
    public void process(Document doc) {
-      double ptc = featurevalues.corpusfrequency / (double) repository.getCorpusTF();
-      featurevalues.frequency = 0;
+      double ptc = getCF() / (double) repository.getCF();
+      setFrequency(0);
       double score = 0;
       SensePos value = storefeature.getValue(doc);
-      featurevalues.pos = value.pos;
-      if (featurevalues.pos == null) {
+      pos = value.pos;
+      if (pos == null) {
       } else if (!contextfound) {
-         score = featurevalues.pos.length / (2500 * ptc);
+         score = pos.length / (2500 * ptc);
       } else {
          for (long s : value.sense) {
             double minprel = 1;
@@ -98,13 +102,13 @@ public class TermAOI extends Term {
             }
          }
       }
-      doc.score += featurevalues.queryweight * Math.log(1 + score);
+      doc.score += getQueryWeight() * Math.log(1 + score);
    }
 
    @Override
-   public GraphNode clone(GraphRoot newmodel) {
-      if (termid >= 0) {
-         TermAOI e = new TermAOI(newmodel, originalterm, stemmedterm);
+   public Operator clone(GraphRoot newmodel) {
+      if (term.exists()) {
+         TermAOI e = new TermAOI(newmodel, term);
          return e;
       } else {
          return null;
@@ -115,7 +119,7 @@ public class TermAOI extends Term {
    public String postReform() {
       StringBuilder sb = new StringBuilder();
       sb.append(getName()).append(":(");
-      sb.append(stemmedterm).append(" ");
+      sb.append(term.toString()).append(" ");
       sb.append(")").toString();
       return sb.toString();
    }

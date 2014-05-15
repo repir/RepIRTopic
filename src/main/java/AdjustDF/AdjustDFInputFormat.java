@@ -1,6 +1,7 @@
 package AdjustDF;
 
 import io.github.repir.Repository.Repository;
+import io.github.repir.Repository.Term;
 import io.github.repir.tools.Lib.Log;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -40,7 +41,7 @@ public class AdjustDFInputFormat extends InputFormat<NullWritable, MapInputWrita
       job.setOutputFormatClass(NullOutputFormat.class);
       for (String t : topics) {
          MapInputWritable m = new MapInputWritable();
-         m.stemmedterm = t;
+         m.term = t;
          add( repository, m );
       }
    }
@@ -71,7 +72,7 @@ public class AdjustDFInputFormat extends InputFormat<NullWritable, MapInputWrita
     */
    public static void add(Repository repository, MapInputWritable term) {
       for (int partition = 0; partition < repository.getPartitions(); partition++) {
-         MapInputWritable rec = new MapInputWritable( partition, term.stemmedterm );
+         MapInputWritable rec = term.clone( partition );
          AdjustDFInputSplit split = new AdjustDFInputSplit(repository, partition, rec);
          list.add(split);
       }

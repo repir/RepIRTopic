@@ -1,15 +1,15 @@
 package io.github.repir.Repository;
 
-import java.util.ArrayList;
 import io.github.repir.Repository.AOI.File;
 import io.github.repir.Repository.AOI.Record;
 import io.github.repir.tools.Content.Datafile;
-import io.github.repir.tools.Content.StructuredFileKeyValue;
-import io.github.repir.tools.Content.StructuredFileKeyValueRecord;
 import io.github.repir.tools.Lib.ArrayTools;
 import io.github.repir.tools.Lib.Log;
 import io.github.repir.tools.Lib.MathTools;
 import io.github.repir.tools.Lib.PrintTools;
+import io.github.repir.tools.Structure.StructuredFileKeyValue;
+import io.github.repir.tools.Structure.StructuredFileKeyValueRecord;
+import java.util.ArrayList;
 
 /**
  * contains the rules to disambiguate between the senses of a word

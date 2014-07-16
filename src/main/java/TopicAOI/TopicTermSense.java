@@ -5,8 +5,8 @@ import java.io.DataOutput;
 import java.io.IOException;
 import org.apache.hadoop.io.WritableComparable;
 import org.apache.hadoop.io.WritableComparator;
-import io.github.repir.tools.Content.BufferDelayedWriter;
-import io.github.repir.tools.Content.BufferReaderWriter;
+import io.github.repir.tools.Buffer.BufferDelayedWriter;
+import io.github.repir.tools.Buffer.BufferReaderWriter;
 import io.github.repir.tools.Content.EOCException;
 
 /**

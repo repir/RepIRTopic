@@ -1,14 +1,12 @@
 package AdjustDF;
 
-import TermInvertedSenseBuilder.*;
-import io.github.repir.tools.Content.BufferDelayedWriter;
-import io.github.repir.tools.Content.BufferReaderWriter;
+import io.github.repir.tools.Buffer.BufferDelayedWriter;
+import io.github.repir.tools.Buffer.BufferReaderWriter;
 import io.github.repir.tools.Content.EOCException;
 import io.github.repir.tools.Lib.Log;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.Writable;
 
 public class SenseValue implements Writable {

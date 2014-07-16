@@ -9,7 +9,7 @@ import io.github.repir.Repository.TermContext.Record;
 import io.github.repir.Repository.TermContext.Sample;
 import io.github.repir.Repository.TermInverted;
 import io.github.repir.Retriever.Document;
-import io.github.repir.Repository.Configuration;
+import io.github.repir.tools.MapReduce.Configuration;
 import io.github.repir.tools.Lib.Log;
 import java.io.IOException;
 import java.util.ArrayList;

@@ -1,7 +1,7 @@
 package testAppend;
 
 import io.github.repir.Repository.Repository;
-import io.github.repir.Repository.Configuration;
+import io.github.repir.tools.MapReduce.Configuration;
 import io.github.repir.tools.Lib.Log;
 import java.util.UUID;
 

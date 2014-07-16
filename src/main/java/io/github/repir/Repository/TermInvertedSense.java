@@ -3,13 +3,13 @@ package io.github.repir.Repository;
 import io.github.repir.Repository.DocLiteral;
 import io.github.repir.Repository.Repository;
 import io.github.repir.Repository.TermDocumentFeature;
-import io.github.repir.tools.Content.Datafile;
-import io.github.repir.tools.Content.StructuredFileSequential;
 import io.github.repir.Repository.TermInvertedSense.File;
-import io.github.repir.Retriever.Document;
-import io.github.repir.tools.Lib.Log;
 import io.github.repir.Repository.TermInvertedSense.SensePos;
+import io.github.repir.Retriever.Document;
+import io.github.repir.tools.Content.Datafile;
+import io.github.repir.tools.Lib.Log;
 import io.github.repir.tools.Lib.PrintTools;
+import io.github.repir.tools.Structure.StructuredFileSequential;
 
 public class TermInvertedSense extends TermDocumentFeature<File, SensePos> {
 

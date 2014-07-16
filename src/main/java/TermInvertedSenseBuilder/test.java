@@ -6,7 +6,7 @@ import io.github.repir.Repository.Term;
 import io.github.repir.Repository.TermInverted;
 import io.github.repir.Retriever.Document;
 import io.github.repir.Retriever.Retriever;
-import io.github.repir.Repository.Configuration;
+import io.github.repir.tools.MapReduce.Configuration;
 import io.github.repir.tools.Lib.ArrayTools;
 import io.github.repir.tools.Lib.Log; 
 

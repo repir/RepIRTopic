@@ -8,7 +8,7 @@ import io.github.repir.Repository.EntityStoredFeature;
 import io.github.repir.Repository.Repository;
 import io.github.repir.Repository.Term;
 import io.github.repir.tools.Lib.Log;
-import io.github.repir.tools.MapReduce.Job;
+import io.github.repir.tools.hadoop.Job;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;

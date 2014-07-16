@@ -5,8 +5,8 @@ import io.github.repir.Repository.StoredDynamicFeature;
 import test.test.File;
 import test.test.Record;
 import io.github.repir.tools.Content.Datafile;
-import io.github.repir.tools.Content.StructuredFileKeyValue;
-import io.github.repir.tools.Content.StructuredFileKeyValueRecord;
+import io.github.repir.tools.Structure.StructuredFileKeyValue;
+import io.github.repir.tools.Structure.StructuredFileKeyValueRecord;
 import io.github.repir.tools.Lib.Log;
 import io.github.repir.tools.Lib.Log;
 

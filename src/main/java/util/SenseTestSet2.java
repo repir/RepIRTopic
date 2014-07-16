@@ -4,7 +4,7 @@ import io.github.repir.Repository.Repository;
 import io.github.repir.Retriever.Query;
 import io.github.repir.Retriever.MapReduce.Retriever;
 import io.github.repir.tools.Lib.Log;
-import io.github.repir.Repository.Configuration;
+import io.github.repir.tools.MapReduce.Configuration;
 
 /**
  * Retrieve all topics from the TestSet, and store in an output file. arguments:

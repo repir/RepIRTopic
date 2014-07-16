@@ -1,9 +1,9 @@
 package AOI.Analyze;
 
 import io.github.repir.Repository.Repository;
-import io.github.repir.tools.MapReduce.Job;
 import io.github.repir.tools.Lib.Log;
 import io.github.repir.tools.MapReduce.StringInputFormat;
+import io.github.repir.tools.hadoop.Job;
 import java.io.IOException;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.mapreduce.lib.output.NullOutputFormat;
@@ -19,7 +19,7 @@ public class AnalyzeJob extends Job {
    public StringInputFormat inputformat;
 
    public AnalyzeJob(Repository repository) throws IOException {
-      super(repository, "AOI Analyzer " + repository.configuredString("rr.conf"));
+      super(repository.getConfiguration(), "AOI Analyzer " + repository.configuredString("rr.conf"));
       inputformat = new StringInputFormat(repository);
       setMapOutputKeyClass(NullWritable.class);
       setMapOutputValueClass(NullWritable.class);

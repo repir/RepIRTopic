@@ -2,7 +2,7 @@ package test;
 
 import io.github.repir.Repository.Repository;
 import io.github.repir.tools.Lib.Log;
-import io.github.repir.tools.MapReduce.Job;
+import io.github.repir.tools.hadoop.Job;
 import io.github.repir.tools.MapReduce.StringInputFormat;
 import java.io.IOException;
 import org.apache.hadoop.io.NullWritable;
@@ -19,7 +19,7 @@ public class TestJob extends Job {
    protected StringInputFormat inputformat;
 
    public TestJob(Repository repository) throws IOException {
-      super(repository, "MR Test " + repository.configuredString("rr.conf"));
+      super(repository.getConfiguration(), "MR Test " + repository.configuredString("rr.conf"));
       inputformat = new StringInputFormat( repository );
       setMapOutputKeyClass(NullWritable.class);
       setMapOutputValueClass(NullWritable.class);

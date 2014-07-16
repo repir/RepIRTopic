@@ -1,8 +1,8 @@
 package AdjustDF;
 
 import TermInvertedSenseBuilder.*;
-import io.github.repir.tools.Content.BufferDelayedWriter;
-import io.github.repir.tools.Content.BufferReaderWriter;
+import io.github.repir.tools.Buffer.BufferDelayedWriter;
+import io.github.repir.tools.Buffer.BufferReaderWriter;
 import io.github.repir.tools.Content.EOCException;
 import io.github.repir.tools.Lib.Log;
 import java.io.DataInput;

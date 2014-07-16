@@ -6,7 +6,7 @@ import io.github.repir.Repository.Term;
 import io.github.repir.Repository.TermString;
 import io.github.repir.tools.ByteSearch.ByteSearch;
 import io.github.repir.tools.Content.HDFSDir;
-import io.github.repir.tools.DataTypes.HashMap;
+import java.util.HashMap;
 import io.github.repir.tools.Lib.Log;
 import java.util.ArrayList;
 import java.util.Collection;

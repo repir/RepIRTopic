@@ -3,9 +3,9 @@ package testAppend;
 import io.github.repir.Repository.EntityStoredFeature;
 import io.github.repir.Repository.Pig.PigDoc.File;
 import io.github.repir.tools.Content.Datafile;
-import io.github.repir.tools.Content.StructuredTextFile;
-import io.github.repir.tools.Content.StructuredTextPig;
-import io.github.repir.tools.Content.StructuredTextPigTuple;
+import io.github.repir.tools.Structure.StructuredTextFile;
+import io.github.repir.tools.Structure.StructuredTextPig;
+import io.github.repir.tools.Structure.StructuredTextPigTuple;
 
 /**
  * Can store one literal String per Document, e.g. collection ID, title, url.

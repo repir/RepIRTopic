@@ -6,7 +6,7 @@ import io.github.repir.Repository.DocLiteral;
 import io.github.repir.Repository.Repository;
 import io.github.repir.Repository.TermInvertedSense;
 import io.github.repir.Retriever.Document;
-import io.github.repir.tools.DataTypes.HashMap;
+import java.util.HashMap;
 import io.github.repir.tools.DataTypes.Tuple2;
 import io.github.repir.tools.Lib.ArrayTools;
 import io.github.repir.tools.Lib.Log;

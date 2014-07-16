@@ -4,13 +4,14 @@ import io.github.repir.Repository.Repository;
 import io.github.repir.Repository.Term;
 import io.github.repir.Retriever.Query;
 import io.github.repir.Retriever.Retriever;
+import io.github.repir.TestSet.Qrel.QRel;
 import io.github.repir.TestSet.TestSet;
 import io.github.repir.TestSet.Topic.TestSetTopic;
 import io.github.repir.TestSet.Topic.TestSetTopicSession;
-import io.github.repir.Repository.Configuration;
 import io.github.repir.tools.DataTypes.Tuple2;
 import io.github.repir.tools.Lib.Log;
-import io.github.repir.tools.MapReduce.Job;
+import io.github.repir.tools.hadoop.Configuration;
+import io.github.repir.tools.hadoop.Job;
 import java.util.ArrayList;
 import java.util.HashMap;
 import org.apache.hadoop.io.NullWritable;
@@ -24,7 +25,7 @@ public class Build {
       Configuration conf = new Configuration(args, "");
       Repository repository = new Repository(args);
       Retriever retriever = new Retriever(repository);
-      Job job = new Job(repository, "Topic AOI Builder " + conf.get("repository.prefix"));
+      Job job = new Job(conf, "Topic AOI Builder " + conf.get("repository.prefix"));
       job.setJarByClass(TopicAOIMap.class);
 
       job.setNumReduceTasks(1);
@@ -41,7 +42,7 @@ public class Build {
       job.setReducerClass(TopicAOIReduce.class);
 
       TestSet testset = new TestSet(repository);
-      HashMap<Integer, HashMap<String, Integer>> qrels = testset.getQrels();
+      HashMap<Integer, QRel> qrels = testset.getQrels();
       ArrayList<Query> queries = new ArrayList<Query>();
 
       // map of <partition, map<collectionid, list<topicid, queryterm>>>

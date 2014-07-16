@@ -5,7 +5,7 @@ import io.github.repir.Repository.TopicAOI;
 import io.github.repir.Repository.TopicAOI.Record;
 import io.github.repir.tools.Lib.ArrayTools;
 import io.github.repir.tools.Lib.Log;
-import io.github.repir.tools.MapReduce.Job;
+import io.github.repir.tools.hadoop.Job;
 import java.io.IOException;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.mapreduce.Reducer;

@@ -9,13 +9,10 @@ import io.github.repir.Repository.TopicAOI;
 import io.github.repir.Repository.TopicAOI.Record;
 import io.github.repir.Retriever.Document;
 import io.github.repir.Strategy.GraphRoot;
-import io.github.repir.Strategy.GraphRoot;
-import io.github.repir.Strategy.Operator.Operator;
-import io.github.repir.Strategy.Operator.QTerm;
-import io.github.repir.tools.DataTypes.HashMap;
 import io.github.repir.tools.Lib.ArrayTools;
 import io.github.repir.tools.Lib.Log;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * A Term scores the occurrences of a single term in a document.

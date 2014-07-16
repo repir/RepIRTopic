@@ -3,7 +3,7 @@ package AOI.Analyze;
 import io.github.repir.Repository.AOI;
 import io.github.repir.Repository.Repository;
 import io.github.repir.Repository.Term;
-import io.github.repir.Repository.Configuration;
+import io.github.repir.tools.hadoop.Configuration;
 import io.github.repir.tools.Lib.Log;
 import java.io.IOException;
 import java.util.ArrayList;

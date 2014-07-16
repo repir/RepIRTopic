@@ -4,7 +4,7 @@ import static AOI.Analyze.Transfer.getKeywords;
 import io.github.repir.Repository.Repository;
 import io.github.repir.Repository.Term;
 import io.github.repir.tools.Lib.Log;
-import io.github.repir.tools.MapReduce.Job;
+import io.github.repir.tools.hadoop.Job;
 import java.util.ArrayList;
 import org.apache.hadoop.io.NullWritable;
 
@@ -15,7 +15,7 @@ public class Build {
 
    public static void main(String[] args) throws Exception {
       Repository repository = new Repository( args[0] );
-      Job job = new Job(repository, "Sense Builder " + repository.configuredString("repository.prefix"));
+      Job job = new Job(repository.getConfiguration(), "Sense Builder " + repository.configuredString("repository.prefix"));
 
       int partitions = repository.configuredInt("repository.partitions", -1);
       job.setNumReduceTasks(partitions);

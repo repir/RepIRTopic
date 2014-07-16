@@ -7,7 +7,7 @@ import io.github.repir.Retriever.MapReduce.Retriever;
 import io.github.repir.Retriever.Query;
 import io.github.repir.TestSet.TestSet;
 import io.github.repir.TestSet.Topic.TestSetTopic;
-import io.github.repir.Repository.Configuration;
+import io.github.repir.tools.MapReduce.Configuration;
 import io.github.repir.tools.Lib.Log;
 import java.util.HashMap;
 import java.util.HashSet;

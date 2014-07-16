@@ -2,7 +2,7 @@ package io.github.repir.apps.Context;
 
 import io.github.repir.Repository.Repository;
 import io.github.repir.tools.Lib.Log;
-import io.github.repir.tools.MapReduce.Job;
+import io.github.repir.tools.hadoop.Job;
 import io.github.repir.tools.MapReduce.StringInputFormat;
 import java.io.IOException;
 import org.apache.hadoop.io.NullWritable;
@@ -19,7 +19,7 @@ public class ContextJob extends Job {
    public StringInputFormat inputformat;
 
    public ContextJob(Repository repository) throws IOException {
-      super(repository, "Context collector " + repository.configuredString("rr.conf"));
+      super(repository.getConfiguration(), "Context collector " + repository.configuredString("rr.conf"));
       inputformat = new StringInputFormat(repository);
       setMapOutputKeyClass(NullWritable.class);
       setMapOutputValueClass(NullWritable.class);

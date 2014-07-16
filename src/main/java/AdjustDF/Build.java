@@ -1,9 +1,9 @@
 package AdjustDF;
 
 import io.github.repir.Repository.Repository;
-import io.github.repir.tools.MapReduce.Job;
+import io.github.repir.tools.hadoop.Job;
 import io.github.repir.apps.Context.Create;
-import io.github.repir.Repository.Configuration;
+import io.github.repir.tools.hadoop.Configuration;
 import io.github.repir.tools.Lib.Log;
 import java.util.Collection;
 import org.apache.hadoop.io.NullWritable;
@@ -16,7 +16,7 @@ public class Build {
       Configuration conf = new Configuration(args, "{othersets}");
       conf.setPriorityHigh();
       Repository repository = new Repository(conf);
-      Job job = new Job(repository, "Sense DF Adjust " + conf.get("repository.prefix"));
+      Job job = new Job(repository.getConfiguration(), "Sense DF Adjust " + conf.get("repository.prefix"));
 
       int partitions = conf.getInt("repository.partitions", -1);
       job.setNumReduceTasks(partitions);
